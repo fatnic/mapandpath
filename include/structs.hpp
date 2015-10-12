@@ -5,6 +5,11 @@
 
 typedef sf::Vector2<double> Point;
 
+struct Ray
+{
+    Point start, end;
+};
+
 struct Segment
 {
     Segment(const Point p1, const Point p2)
