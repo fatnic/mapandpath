@@ -24,7 +24,7 @@ void Pathfind::buildGridPath()
     while(y < _mp->getGridSize().y)
     {
         std::vector<bool> xRow;
-        for(int x = 1; x < (_mp->getGridSize().x - 1); x++)
+        for(int x = 0; x < (_mp->getGridSize().x + 1); x++)
         {
             bool blocked = false;
             Point grid( ((x+1) * _mp->getTileSize().x) - (_mp->getTileSize().x / 2), ((y+1) * _mp->getTileSize().y) - (_mp->getTileSize().y / 2));
@@ -41,6 +41,15 @@ void Pathfind::buildGridPath()
         _gridPath.push_back(xRow);
         y++;
     }    
+
+    for(std::vector<bool> y : _gridPath)
+    {
+        for(bool x : y)
+        {
+            std::cout << x;
+        }
+        std::cout << "\n";
+    }
 }
 
 void Pathfind::setStart(const int x, const int y)
@@ -143,7 +152,7 @@ std::vector<Point*> Pathfind::run()
 
         for(int i =0; i < 9; i++)
         {
-            if(!neighbours[i])
+            if(neighbours[i] == false)
                 continue;
 
             int xi = (i % 3) - 1;
