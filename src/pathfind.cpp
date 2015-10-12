@@ -41,15 +41,6 @@ void Pathfind::buildGridPath()
         _gridPath.push_back(xRow);
         y++;
     }    
-
-    for(std::vector<bool> y : _gridPath)
-    {
-        for(bool x : y)
-        {
-            std::cout << x;
-        }
-        std::cout << "\n";
-    }
 }
 
 void Pathfind::setStart(const int x, const int y)
