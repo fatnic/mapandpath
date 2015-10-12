@@ -92,8 +92,7 @@ std::vector<Point*> Pathfind::run()
 
             while(current->parent != nullptr)
             {
-                /* _waypoints.push_back(new Point(current->cell.x, current->cell.y)); */
-                _finalPath.push_back(new Point(c2p(current->cell)));
+                _waypoints.push_back(new Point(current->cell.x, current->cell.y));
                 current = current->parent;
             }
 
@@ -105,41 +104,42 @@ std::vector<Point*> Pathfind::run()
                 delete node;
             _closedList.clear();
 
-            /* Ray ray; */
-            /* Point intersection; */
-            /* bool found = false; */
+            //TODO: Make this shitty thing work!!!
+            
+            Ray ray;
+            Point intersection;
+            bool found = false;
 
-            /* ray.start = Point(c2p(_start)); */
-            /* Point done = c2p(_goal); */
+            ray.start = Point(c2p(_start));
+            Point done = c2p(_goal);
 
-            /* while(!found) */
-            /* { */
-            /*     for(Point* wp : _waypoints) */
-            /*     { */
-            /*         ray.end = Point(c2p(*wp)); */
-            /*         bool blocked = true; */
+            while(!found)
+            {
+                for(Point* wp : _waypoints)
+                {
+                    ray.end = Point(c2p(*wp));
+                    bool blocked = false;
 
-            /*         for(Segment segment : _wallSegments) */
-            /*         { */
-            /*             if(Tools::getIntersection(ray, &segment, intersection)) */
-            /*             { */
-            /*                 blocked = true; */
-            /*                 break; */
-            /*             } */
-            /*         } */
+                    for(Segment segment : _wallSegments)
+                    {
+                        if(Tools::getIntersection(ray, &segment, intersection))
+                        {
+                            blocked = true;
+                            break;
+                        }
+                    }
 
-            /*         if(!blocked) */
-            /*         { */
-            /*             _finalPath.push_back(new Point(ray.end.x, ray.end.y)); */
-            /*             ray.start = ray.end; */
-            /*             if(ray.start == done) */
-            /*                 found = true; */
-            /*             break; */
-            /*         } */
-            /*     } */
-            /* } */
+                    if(!blocked)
+                    {
+                        _finalPath.push_back(new Point(ray.end.x, ray.end.y));
+                        ray.start = ray.end;
+                        if(ray.start == done) found = true;
+                        break;
+                    }
+                }
+            }
 
-            std::reverse(_finalPath.begin(), _finalPath.end());
+            /* std::reverse(_finalPath.begin(), _finalPath.end()); */
             return _finalPath;
         }
 

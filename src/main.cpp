@@ -57,12 +57,11 @@ int main()
         window.clear(sf::Color::Red);
         mp.draw(&window);
 
-        /* Point wp1(guard.getPosition().x, guard.getPosition().y); */
+        Point wp1(guard.getPosition().x, guard.getPosition().y);
         for(Point* point : waypoints)
         {
-            DrawTools::drawCircle(3, *point, sf::Color::Yellow, &window);
-            /* DrawTools::drawLine(wp1, *point, sf::Color::Green, &window); */
-            /* wp1 = *point; */
+            DrawTools::drawLine(wp1, *point, sf::Color::Green, &window);
+            wp1 = *point;
         }
 
         window.draw(guard);
