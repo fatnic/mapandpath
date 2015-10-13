@@ -15,12 +15,12 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(mp.getMapSize().x, mp.getMapSize().y), "GameWindow", sf::Style::Default, settings);
 
-    sf::CircleShape guard(8);
+    sf::CircleShape guard(4);
     guard.setOrigin(guard.getRadius(), guard.getRadius());
     guard.setFillColor(sf::Color::Blue);
     guard.setPosition(40,40);
 
-    sf::CircleShape goal(8);
+    sf::CircleShape goal(4);
     goal.setOrigin(goal.getRadius(), goal.getRadius());
     goal.setFillColor(sf::Color::Green);
 

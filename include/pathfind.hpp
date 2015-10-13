@@ -29,8 +29,6 @@ public:
     void setGoal(const int x, const int y);
     std::vector<Point*> run();
 
-    std::vector<Point*> debugPoints;
-
 private:
     void calcNeighbours(int x, int y);
     bool blocked(Point cell);
