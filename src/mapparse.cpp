@@ -84,6 +84,15 @@ std::vector<Wall> MapParse::getWalls()
     return _walls;
 }
 
+Point MapParse::getSpawnPoint(const char* name)
+{
+    pugi::xml_node spawnNode = tmx.child("map").find_child_by_attribute("objectgroup", "name", "spawn").find_child_by_attribute("object", "name", name);
+    Point spawn;
+    spawn.x = spawnNode.attribute("x").as_int();
+    spawn.y = spawnNode.attribute("y").as_int();
+    return spawn;
+}
+
 void MapParse::draw(sf::RenderWindow* window)
 {
     sf::RectangleShape bg;

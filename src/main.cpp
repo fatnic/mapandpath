@@ -3,6 +3,8 @@
 #include "pathfind.hpp"
 #include "tools/drawtools.hpp"
 
+#include <iostream>
+
 int main()
 {
     sf::ContextSettings settings;
@@ -18,15 +20,15 @@ int main()
     sf::CircleShape guard(4);
     guard.setOrigin(guard.getRadius(), guard.getRadius());
     guard.setFillColor(sf::Color::Blue);
-    guard.setPosition(40,40);
+    guard.setPosition(mp.getSpawnPoint("start").x, mp.getSpawnPoint("start").y);
 
     sf::CircleShape goal(4);
     goal.setOrigin(goal.getRadius(), goal.getRadius());
     goal.setFillColor(sf::Color::Green);
-
+    goal.setPosition(mp.getSpawnPoint("goal").x, mp.getSpawnPoint("goal").y);
 
     std::vector<Point*> waypoints;
-    bool goalSet = false;
+    bool pf_run = true;
 
     while(window.isOpen())
     {
@@ -45,21 +47,26 @@ int main()
         {
             int x = sf::Mouse::getPosition(window).x;
             int y = sf::Mouse::getPosition(window).y;
-            goalSet = true;
             guard.setPosition(x, y);
+            pf_run = true;
         }
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             int x = sf::Mouse::getPosition(window).x;
             int y = sf::Mouse::getPosition(window).y;
-            goalSet = true;
             goal.setPosition(x, y);
+            pf_run = true;
 
+        }
+
+        if(pf_run)
+        {
             pf.setStart(guard.getPosition().x, guard.getPosition().y);
-            pf.setGoal(x, y);
+            pf.setGoal(goal.getPosition().x, goal.getPosition().y);
             waypoints.clear();
             waypoints = pf.run();
+            pf_run = false;
         }
 
         window.clear(sf::Color::Red);
@@ -73,9 +80,7 @@ int main()
         }
 
         window.draw(guard);
-
-        if(goalSet)
-            window.draw(goal);
+        window.draw(goal);
 
         window.display();
     }

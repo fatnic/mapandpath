@@ -14,6 +14,7 @@ public:
     sf::Vector2i getTileSize();
     sf::Vector2i getGridSize();
     std::vector<Wall> getWalls();
+    Point getSpawnPoint(const char* name);
     void draw(sf::RenderWindow* window);
 private:
     pugi::xml_document tmx;

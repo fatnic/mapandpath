@@ -247,4 +247,3 @@ Point Pathfind::c2p(Point cell)
 {
     return Point((cell.x * _mp->getTileSize().x) - (_mp->getTileSize().x / 2), (cell.y * _mp->getTileSize().y) - (_mp->getTileSize().y / 2));
 }
-
