@@ -41,6 +41,14 @@ int main()
                     window.close();
         }
 
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            int x = sf::Mouse::getPosition(window).x;
+            int y = sf::Mouse::getPosition(window).y;
+            goalSet = true;
+            guard.setPosition(x, y);
+        }
+
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             int x = sf::Mouse::getPosition(window).x;
