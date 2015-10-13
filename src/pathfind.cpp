@@ -57,6 +57,10 @@ void Pathfind::setGoal(const int x, const int y)
 
 std::vector<Point*> Pathfind::run()
 {
+    for(auto& point : debugPoints)
+        delete point;
+    debugPoints.clear();
+
     for(auto& point : _waypoints)
         delete point;
     _waypoints.clear();
@@ -83,6 +87,7 @@ std::vector<Point*> Pathfind::run()
 
             while(current->parent != nullptr)
             {
+                debugPoints.push_back(new Point(c2p(current->cell)));
                 _waypoints.push_back(new Point(current->cell.x, current->cell.y));
                 current = current->parent;
             }
@@ -95,8 +100,6 @@ std::vector<Point*> Pathfind::run()
                 delete node;
             _closedList.clear();
 
-            //TODO: Make this shitty thing work!!!
-            
             Ray ray;
             Point intersection;
             bool found = false;
@@ -130,7 +133,6 @@ std::vector<Point*> Pathfind::run()
                 }
             }
 
-            /* std::reverse(_finalPath.begin(), _finalPath.end()); */
             return _finalPath;
         }
 
