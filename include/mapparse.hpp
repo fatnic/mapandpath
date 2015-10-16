@@ -13,7 +13,7 @@ public:
     sf::Vector2i getMapSize();
     sf::Vector2i getTileSize();
     sf::Vector2i getGridSize();
-    std::vector<Wall> getWalls();
+    std::vector<Wall*> getWalls();
     Point getSpawnPoint(const char* name);
     void draw(sf::RenderWindow* window);
 private:
@@ -23,7 +23,7 @@ private:
     sf::Vector2i _tileset;
     sf::Vector2i _map;
 	std::vector<int> _floor;
-	std::vector<Wall> _walls;
+	std::vector<Wall*> _walls;
     sf::Texture* texture;
 };
 

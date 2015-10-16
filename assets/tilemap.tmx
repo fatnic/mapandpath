@@ -1306,7 +1306,7 @@
   <object id="51" name="start" x="48" y="64">
    <ellipse/>
   </object>
-  <object id="52" name="goal" x="592" y="336">
+  <object id="52" name="goal" x="592" y="127">
    <ellipse/>
   </object>
  </objectgroup>

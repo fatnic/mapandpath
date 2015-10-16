@@ -22,6 +22,7 @@ struct Segment
 struct Wall
 {
 	Segment* segments[4];
+    Point points[4];
     sf::IntRect AABB;
 
     Wall(const int x, const int y, const int width, const int height)
@@ -30,6 +31,9 @@ struct Wall
         segments[1] = new Segment(Point(x + width, y), Point(x + width, y + height));
         segments[2] = new Segment(Point(x + width, y + height), Point(x, y + height));
         segments[3] = new Segment(Point(x, y + height), Point(x, y)); 
+
+        for(std::size_t i = 0; i < 4; i++)
+            points[i] = segments[i]->p1;
 
         AABB.left = x;
         AABB.top = y;
@@ -48,4 +52,4 @@ struct Wall
 };
 
 
-#endif
+#endif /* !_STRUCTS_HPP */

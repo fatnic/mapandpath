@@ -4,9 +4,7 @@
 
 MapParse::MapParse()
     :tmx()
-{
-
-}
+{ }
 
 void MapParse::load(const char* filename)
 {
@@ -58,7 +56,7 @@ void MapParse::load(const char* filename)
        int y      = wall.attribute("y").as_int();
        int width  = wall.attribute("width").as_int();
        int height = wall.attribute("height").as_int();
-       Wall w(x, y, width, height);
+       Wall* w = new Wall(x, y, width, height);
        _walls.push_back(w);
     }
     
@@ -79,7 +77,7 @@ sf::Vector2i MapParse::getGridSize()
     return _grid;
 }
 
-std::vector<Wall> MapParse::getWalls()
+std::vector<Wall*> MapParse::getWalls()
 {
     return _walls;
 }
