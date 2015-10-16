@@ -13,7 +13,6 @@ int main()
     MapParse mp;
     mp.load("assets/lightmap.tmx");
 
-
     sf::RenderWindow window(sf::VideoMode(mp.getMapSize().x, mp.getMapSize().y), "GameWindow", sf::Style::Default, settings);
 
     sf::CircleShape light(4);
@@ -47,6 +46,7 @@ int main()
         vs.setSource(Point(x,y));
 
         lightShape = vs.run();
+
         window.draw(light);
         window.display();
     }

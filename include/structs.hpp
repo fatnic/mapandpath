@@ -10,6 +10,15 @@ struct Ray
     Point start, end;
 };
 
+struct RayLine
+{
+    Ray ray;
+    Point point;
+    double angle;
+    bool isBoundary;
+    std::vector<Point> intersections;
+};
+
 struct Segment
 {
     Segment(const Point p1, const Point p2)
