@@ -87,7 +87,7 @@ sf::VertexArray Vision::run()
     }
 
     tripoint.position = sf::Vector2f(_drawPoints[0].x, _drawPoints[0].y);
-    tripoint.color = sf::Color(255,255,255,50);
+    /* tripoint.color = sf::Color(255,255,255,50); */
     _light.append(tripoint);
 
     return _light;
