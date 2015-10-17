@@ -20,9 +20,13 @@ Point Vision::getSource()
     return _source;
 }
 
-sf::ConvexShape Vision::run()
+sf::VertexArray Vision::run()
 {
-    sf::ConvexShape _light;
+    sf::VertexArray _light;
+    _light.setPrimitiveType(sf::TrianglesFan);
+
+    if(getSource().x < 0 || getSource().x > _mp->getMapSize().x) return _light;
+    if(getSource().y < 0 || getSource().y > _mp->getMapSize().y) return _light;
 
     _drawPoints.clear();
 
@@ -66,10 +70,25 @@ sf::ConvexShape Vision::run()
         _drawPoints.push_back(intersections[0]);
     }
 
-    _light.setPointCount(_drawPoints.size());
+    /* for(Point p : _drawPoints) */
+    /*     DrawTools::drawCircle(6, p, sf::Color::Magenta, _window); */
+
+
+    sf::Vertex tripoint;
+    tripoint.position = sf::Vector2f(getSource().x, getSource().y);
+    tripoint.color = sf::Color(255,255,255,20);
+    _light.append(tripoint);
+
     for(std::size_t i = 0; i < _drawPoints.size(); i++)
-        _light.setPoint(i, sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y));
-    _light.setFillColor(sf::Color(255,255,255,50));
+    {
+        tripoint.position = sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y);
+        tripoint.color = sf::Color(255,255,255,20);
+        _light.append(tripoint);
+    }
+
+    tripoint.position = sf::Vector2f(_drawPoints[0].x, _drawPoints[0].y);
+    tripoint.color = sf::Color(255,255,255,50);
+    _light.append(tripoint);
 
     return _light;
 }

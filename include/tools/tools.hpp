@@ -50,6 +50,45 @@ public:
         intersect = ((segment->p2 - segment->p1) * out) + segment->p1;
         return true;
     }
+
+    static inline bool getIntersection2(Ray ray, Segment* segment, Point& intersect)
+    {
+        Point r1 = ray.start;
+        Point r2 = ray.end;
+        Point p1 = segment->p1;
+        Point p2 = segment->p2; 
+
+        float d = (r1.x - r2.x) * (p1.y - p2.y) - (r1.y - r2.y) * (p1.x - p2.x);
+
+        if(d == 0)
+            return false;
+
+        float pre  = (r1.x * r2.y - r1.y * r2.x);
+        float post = (p1.x * p2.y - p1.y * p2.x);
+        float x = ( pre * (p1.x - p2.x) - (r1.x - r2.x) * post ) / d;
+        float y = ( pre * (p1.y - p2.y) - (r1.y - r2.y) * post ) / d;
+
+        if( x < std::min(r1.x, r2.x) || x > std::max(r1.x, r2.x) ) return false;
+        if( x < std::min(p1.x, p2.x) || x > std::max(p1.x, p2.x) ) return false;
+        if( y < std::min(r1.y, r2.y) || y > std::max(r1.y, r2.y) ) return false;
+        if( y < std::min(p1.y, p2.y) || y > std::max(p1.y, p2.y) ) return false;
+
+        intersect.x = (int)x;
+        intersect.y = (int)y;
+
+        return true;
+    }
+
+    static inline bool getIntersection3(Ray ray, Segment* segment, Point& intersect)
+    {
+        Point r1 = ray.start;
+        Point r2 = ray.end;
+        Point p1 = segment->p1;
+        Point p2 = segment->p2; 
+
+        return true;
+    }
+
 };
 
 #endif

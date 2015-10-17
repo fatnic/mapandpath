@@ -19,7 +19,7 @@ int main()
     light.setOrigin(light.getRadius(), light.getRadius());
     light.setFillColor(sf::Color::Yellow);
 
-    sf::ConvexShape lightShape;
+    sf::VertexArray lightShape;
 
     Vision vs(&mp, &window);
 

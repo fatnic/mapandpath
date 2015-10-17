@@ -11,7 +11,7 @@ public:
     Vision(MapParse* mp, sf::RenderWindow* window);
     void setSource(Point source);
     Point getSource();
-    sf::ConvexShape run();
+    sf::VertexArray run();
     ~Vision();
 private:
     MapParse* _mp;
