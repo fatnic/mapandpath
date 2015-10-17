@@ -22,93 +22,56 @@ Point Vision::getSource()
 
 sf::ConvexShape Vision::run()
 {
-    _raylines.clear();
+    sf::ConvexShape _light;
+
     _drawPoints.clear();
+
+    std::vector<float> _angles;
 
     for(Wall* wall : _mp->getWalls())
     {
         for(std::size_t i = 0; i < 4; i++)
         {
-            _raylines.push_back(calcRayLine(wall, i));
+            float a = std::atan2(wall->points[i].y - getSource().y, wall->points[i].x - getSource().x);
+            _angles.push_back(a - 0.00001);
+            _angles.push_back(a);
+            _angles.push_back(a + 0.00001);
         }
     }
 
-    std::sort(_raylines.begin(), _raylines.end(), [](RayLine* rl1, RayLine* rl2){ return rl1->angle < rl2->angle; });
+    std::sort(_angles.begin(), _angles.end());
 
-    for(Point p : _drawPoints)
-        DrawTools::drawCircle(5, p, sf::Color::White, _window);
+    Ray ray;
+    ray.start = getSource();
 
-    for(RayLine* rl : _raylines)
+    for(float angle : _angles)
     {
-        DrawTools::drawLine(rl->ray.start, rl->ray.end, sf::Color(255,255,255,10), _window);
-        for(Point p : rl->intersections)
-            DrawTools::drawCircle(3, p, sf::Color::Magenta, _window);
+        ray.end.x = (int)ray.start.x + raylineMax * std::cos(angle);
+        ray.end.y = (int)ray.start.y + raylineMax * std::sin(angle);
+
+        std::vector<Point> intersections;
+        for(Wall* wall : _mp->getWalls())
+        {
+            for(std::size_t i = 0; i < 4; i++)
+            {
+                Point intersection;
+                if(Tools::getIntersection(ray, wall->segments[i], intersection))
+                {
+                    intersections.push_back(intersection);
+                }
+            }
+        }
+        std::unique(intersections.begin(), intersections.end());
+        std::sort(intersections.begin(), intersections.end(), [ray](Point& p1, Point& p2){ return Tools::distance(p1, ray.start) < Tools::distance(p2, ray.start); });
+        _drawPoints.push_back(intersections[0]);
     }
 
-    sf::ConvexShape _light(_drawPoints.size());
-
+    _light.setPointCount(_drawPoints.size());
     for(std::size_t i = 0; i < _drawPoints.size(); i++)
         _light.setPoint(i, sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y));
-
     _light.setFillColor(sf::Color(255,255,255,50));
 
     return _light;
-}
-
-RayLine* Vision::calcRayLine(Wall* wall, int pointNum)
-{
-    RayLine* rl = new RayLine;
-
-    rl->point.x = (int)wall->points[pointNum].x;
-    rl->point.y = (int)wall->points[pointNum].y;
-    rl->ray.start = getSource();
-    rl->angle = std::atan2(rl->point.y - rl->ray.start.y, rl->point.x - rl->ray.start.x);
-    rl->ray.end.x = (int)rl->ray.start.x + raylineMax * std::cos(rl->angle);
-    rl->ray.end.y = (int)rl->ray.start.y + raylineMax * std::sin(rl->angle);
-    rl->isBoundary = isPointBoundary(wall, pointNum);
-
-    for(Wall* w : _mp->getWalls())
-    {
-        for(Segment* segment : w->segments)
-        {
-            Point intersect;
-            if(Tools::getIntersection(rl->ray, segment, intersect))
-                rl->intersections.push_back(Point((int)intersect.x, (int)intersect.y));
-        }
-    }
-
-    std::unique(rl->intersections.begin(), rl->intersections.end());
-    std::sort(rl->intersections.begin(), rl->intersections.end(), [rl](Point& p1, Point& p2){ return Tools::distance(p1, rl->ray.start) < Tools::distance(p2, rl->ray.start); });
-    return rl;
-}
-
-bool Vision::isSegmentFacing(Segment* segment, int segmentNum)
-{
-    switch(segmentNum)
-    {
-        case 0:
-            if(_source.y < segment->p1.y) return true;
-            break;
-        case 1:
-            if(_source.x > segment->p1.x) return true;
-            break;
-        case 2:
-            if(_source.y > segment->p1.y) return true;
-            break;
-        case 3:
-            if(_source.x < segment->p1.x) return true;
-            break;
-    }
-    return false;
-}
-
-bool Vision::isPointBoundary(Wall* wall, int pointNum)
-{
-    int prevPoint = (pointNum == 0) ? 3 : pointNum - 1;
-    bool s1 = isSegmentFacing(wall->segments[prevPoint], prevPoint);
-    bool s2 = isSegmentFacing(wall->segments[pointNum], pointNum);
-    if(s1 != s2) return true;
-    return false;
 }
 
 Vision::~Vision()

@@ -17,7 +17,6 @@ private:
     MapParse* _mp;
     sf::RenderWindow* _window;
     Point _source;
-    std::vector<float> _angles;
     std::vector<RayLine*> _raylines;
     std::vector<Point> _drawPoints;
     float raylineMax;

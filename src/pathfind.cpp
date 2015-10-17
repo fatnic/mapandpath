@@ -5,9 +5,9 @@
 Pathfind::Pathfind(MapParse* mp)
     : _mp(mp)
 {
-    for(Wall& wall : _mp->getWalls())
+    for(Wall* wall : _mp->getWalls())
     {
-        for(Segment* segment : wall.segments)
+        for(Segment* segment : wall->segments)
         {
             _wallSegments.push_back(*segment);
         }
@@ -28,9 +28,9 @@ void Pathfind::buildGridPath()
         {
             bool blocked = false;
             Point grid( ((x+1) * _mp->getTileSize().x) - (_mp->getTileSize().x / 2), ((y+1) * _mp->getTileSize().y) - (_mp->getTileSize().y / 2));
-            for(Wall wall : _mp->getWalls())
+            for(Wall* wall : _mp->getWalls())
             {
-                if(wall.AABB.contains(grid.x, grid.y))
+                if(wall->AABB.contains(grid.x, grid.y))
                 {
                     blocked = true;
                     break;
