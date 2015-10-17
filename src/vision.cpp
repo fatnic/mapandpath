@@ -6,7 +6,6 @@
 Vision::Vision(MapParse* mp, sf::RenderWindow* window)
     :_mp(mp)
     ,_window(window)
-     , _light()
 {
     raylineMax = std::sqrt((_mp->getMapSize().x * _mp->getMapSize().x) + (_mp->getMapSize().y * _mp->getMapSize().y));
 }
@@ -36,11 +35,6 @@ sf::ConvexShape Vision::run()
 
     std::sort(_raylines.begin(), _raylines.end(), [](RayLine* rl1, RayLine* rl2){ return rl1->angle < rl2->angle; });
 
-    for(RayLine* rl : _raylines)
-    {
-        _drawPoints.push_back(rl->intersections[0]);
-    }
-
     for(Point p : _drawPoints)
         DrawTools::drawCircle(5, p, sf::Color::White, _window);
 
@@ -51,7 +45,12 @@ sf::ConvexShape Vision::run()
             DrawTools::drawCircle(3, p, sf::Color::Magenta, _window);
     }
 
+    sf::ConvexShape _light(_drawPoints.size());
 
+    for(std::size_t i = 0; i < _drawPoints.size(); i++)
+        _light.setPoint(i, sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y));
+
+    _light.setFillColor(sf::Color(255,255,255,50));
 
     return _light;
 }
@@ -77,8 +76,6 @@ RayLine* Vision::calcRayLine(Wall* wall, int pointNum)
                 rl->intersections.push_back(Point((int)intersect.x, (int)intersect.y));
         }
     }
-
-    rl->intersections.push_back(rl->point);
 
     std::unique(rl->intersections.begin(), rl->intersections.end());
     std::sort(rl->intersections.begin(), rl->intersections.end(), [rl](Point& p1, Point& p2){ return Tools::distance(p1, rl->ray.start) < Tools::distance(p2, rl->ray.start); });
@@ -115,4 +112,7 @@ bool Vision::isPointBoundary(Wall* wall, int pointNum)
 }
 
 Vision::~Vision()
-{}
+{
+    delete _mp;
+    delete _window;
+}

@@ -47,6 +47,7 @@ int main()
 
         lightShape = vs.run();
 
+        window.draw(lightShape);
         window.draw(light);
         window.display();
     }

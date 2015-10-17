@@ -17,7 +17,7 @@ private:
     MapParse* _mp;
     sf::RenderWindow* _window;
     Point _source;
-    sf::ConvexShape _light;
+    std::vector<float> _angles;
     std::vector<RayLine*> _raylines;
     std::vector<Point> _drawPoints;
     float raylineMax;
