@@ -6,6 +6,7 @@
 Vision::Vision(MapParse* mp, sf::RenderWindow* window)
     :_mp(mp)
     ,_window(window)
+    ,_fov(360)
 {
     raylineMax = std::sqrt((_mp->getMapSize().x * _mp->getMapSize().x) + (_mp->getMapSize().y * _mp->getMapSize().y));
 }
@@ -13,6 +14,21 @@ Vision::Vision(MapParse* mp, sf::RenderWindow* window)
 void Vision::setSource(Point source)
 {
     _source = source;
+}
+
+void Vision::setHeading(float angle)
+{
+    _heading = angle;
+}
+
+void Vision::setFOV(float angle)
+{
+    _fov = angle;
+}
+
+void Vision::setColour(sf::Color colour)
+{
+    _colour = colour;
 }
 
 Point Vision::getSource()
@@ -28,18 +44,40 @@ sf::VertexArray Vision::run()
     if(getSource().x < 0 || getSource().x > _mp->getMapSize().x) return _light;
     if(getSource().y < 0 || getSource().y > _mp->getMapSize().y) return _light;
 
+    float fov = Tools::deg2rad(_fov);
+    float half_fov = fov / 2;
+
+    float minf = Tools::normalizeAngle(_heading - half_fov);
+    float maxf = Tools::normalizeAngle(_heading + half_fov);
+    
+    Ray minFov;
+    minFov.start = getSource();
+    minFov.end.x = (int)minFov.start.x + raylineMax * std::cos(minf);
+    minFov.end.y = (int)minFov.start.y + raylineMax * std::sin(minf);
+    /* DrawTools::drawLine(minFov.start, minFov.end, sf::Color::Green, _window); */
+    
+    Ray maxFov;
+    maxFov.start = getSource();
+    maxFov.end.x = (int)maxFov.start.x + raylineMax * std::cos(maxf);
+    maxFov.end.y = (int)maxFov.start.y + raylineMax * std::sin(maxf);
+    /* DrawTools::drawLine(maxFov.start, maxFov.end, sf::Color::Green, _window); */
+
     _drawPoints.clear();
 
     std::vector<float> _angles;
+
+    _angles.push_back(minf);
+    _angles.push_back(maxf);
 
     for(Wall* wall : _mp->getWalls())
     {
         for(std::size_t i = 0; i < 4; i++)
         {
             float a = std::atan2(wall->points[i].y - getSource().y, wall->points[i].x - getSource().x);
-            _angles.push_back(a - 0.00001);
-            _angles.push_back(a);
-            _angles.push_back(a + 0.00001);
+            if(!Tools::angleBetween(a, minf, maxf)) continue;
+            _angles.push_back(Tools::normalizeAngle(a) - 0.000001);
+            _angles.push_back(Tools::normalizeAngle(a));
+            _angles.push_back(Tools::normalizeAngle(a) + 0.000001);
         }
     }
 
@@ -52,6 +90,7 @@ sf::VertexArray Vision::run()
     {
         ray.end.x = (int)ray.start.x + raylineMax * std::cos(angle);
         ray.end.y = (int)ray.start.y + raylineMax * std::sin(angle);
+        DrawTools::drawLine(ray.start, ray.end, sf::Color(255,255,255, 50), _window);
 
         std::vector<Point> intersections;
         for(Wall* wall : _mp->getWalls())
@@ -65,29 +104,26 @@ sf::VertexArray Vision::run()
                 }
             }
         }
+
+        // TODO: Get rid of this.. refactor to simple closestIntersection = least distance
         std::unique(intersections.begin(), intersections.end());
         std::sort(intersections.begin(), intersections.end(), [ray](Point& p1, Point& p2){ return Tools::distance(p1, ray.start) < Tools::distance(p2, ray.start); });
+
         _drawPoints.push_back(intersections[0]);
     }
 
-    /* for(Point p : _drawPoints) */
-    /*     DrawTools::drawCircle(6, p, sf::Color::Magenta, _window); */
-
-
     sf::Vertex tripoint;
     tripoint.position = sf::Vector2f(getSource().x, getSource().y);
-    tripoint.color = sf::Color(255,255,255,20);
+    tripoint.color = _colour;
     _light.append(tripoint);
 
     for(std::size_t i = 0; i < _drawPoints.size(); i++)
     {
         tripoint.position = sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y);
-        tripoint.color = sf::Color(255,255,255,20);
         _light.append(tripoint);
     }
 
     tripoint.position = sf::Vector2f(_drawPoints[0].x, _drawPoints[0].y);
-    /* tripoint.color = sf::Color(255,255,255,50); */
     _light.append(tripoint);
 
     return _light;
@@ -95,6 +131,4 @@ sf::VertexArray Vision::run()
 
 Vision::~Vision()
 {
-    delete _mp;
-    delete _window;
 }

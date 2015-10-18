@@ -18,10 +18,14 @@ int main()
     sf::CircleShape light(4);
     light.setOrigin(light.getRadius(), light.getRadius());
     light.setFillColor(sf::Color::Yellow);
+    light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
     sf::VertexArray lightShape;
 
     Vision vs(&mp, &window);
+    vs.setColour(sf::Color(255, 255, 255, 60));
+
+    float fov = 60.f;
 
     while(window.isOpen())
     {
@@ -37,13 +41,36 @@ int main()
 
         }
 
-        window.clear(sf::Color::Red);
-        mp.draw(&window);
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            light.move(-1,0);
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            light.move(1,0);
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            light.move(0,-1);
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            light.move(0,1);
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            fov += 0.2f;
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            fov -= 0.2f;
+
+        vs.setFOV(fov);
 
         int x = sf::Mouse::getPosition(window).x;
         int y = sf::Mouse::getPosition(window).y;
-        light.setPosition(x, y);
-        vs.setSource(Point(x,y));
+
+        float heading = std::atan2(y - light.getPosition().y, x - light.getPosition().x);
+        vs.setHeading(heading);
+
+        window.clear(sf::Color::Red);
+        mp.draw(&window);
+
+        vs.setSource(Point(light.getPosition().x, light.getPosition().y));
 
         lightShape = vs.run();
 

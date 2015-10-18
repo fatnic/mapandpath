@@ -79,14 +79,34 @@ public:
         return true;
     }
 
-    static inline bool getIntersection3(Ray ray, Segment* segment, Point& intersect)
+    static inline float deg2rad(float degrees)
     {
-        Point r1 = ray.start;
-        Point r2 = ray.end;
-        Point p1 = segment->p1;
-        Point p2 = segment->p2; 
+        return (degrees * M_PI) / 180;
+    }
 
-        return true;
+    static inline float rad2deg(float rad)
+    {
+        return (rad * 180) / M_PI;
+    }
+
+    static inline float normalizeAngle(float a)
+    {
+        float x = std::fmod(rad2deg(a), 360);
+        if(x < 0)
+            x += 360;
+        return deg2rad(x);
+    }
+    
+    static inline bool angleBetween(float _angle, float _min, float _max)
+    {
+        float angle = std::fmod(360 + (rad2deg(_angle)), 360);
+        float min = std::fmod(3600000 + rad2deg(_min), 360);
+        float max = std::fmod(3600000 + rad2deg(_max), 360);
+
+        if(min < max)
+            return (min <= angle && angle <= max);
+
+        return (min <= angle || angle <= max);
     }
 
 };
