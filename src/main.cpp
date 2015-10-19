@@ -23,7 +23,7 @@ int main()
     sf::VertexArray lightShape;
 
     Vision vs(&mp, &window);
-    vs.setColour(sf::Color(0, 0, 255, 60));
+    vs.setColour(sf::Color(255, 255, 255, 60));
 
     float fov = 60.f;
 

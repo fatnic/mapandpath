@@ -65,15 +65,16 @@ sf::VertexArray Vision::run()
 
             if(!Tools::angleBetween(a, min_fov, max_fov)) continue;
 
-            _angles.push_back(Tools::normalizeAngle(a) - 0.000001);
+            _angles.push_back(Tools::normalizeAngle(a) - 0.00001);
             _angles.push_back(Tools::normalizeAngle(a));
-            _angles.push_back(Tools::normalizeAngle(a) + 0.000001);
+            _angles.push_back(Tools::normalizeAngle(a) + 0.00001);
         }
     }
 
     std::sort(_angles.begin(), _angles.end());
     auto it = std::find(_angles.begin(), _angles.end(), min_fov);
     std::rotate(_angles.begin(), it, _angles.end());
+    //TODO: Work out why first point sometimes gets repeated...
 
     Ray ray;
     ray.start = getSource();
@@ -98,7 +99,7 @@ sf::VertexArray Vision::run()
 
         // TODO: Get rid of this.. refactor to simple closestIntersection = least distance
         std::unique(intersections.begin(), intersections.end());
-        std::sort(intersections.begin(), intersections.end(), [ray](Point& p1, Point& p2){ return Tools::distance(p1, ray.start) < Tools::distance(p2, ray.start); });
+        std::sort(intersections.begin(), intersections.end(), [&](Point& p1, Point& p2){ return Tools::distance(p1, ray.start) < Tools::distance(p2, ray.start); });
 
         _drawPoints.push_back(intersections[0]);
     }
@@ -113,9 +114,6 @@ sf::VertexArray Vision::run()
         tripoint.position = sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y);
         _light.append(tripoint);
     }
-
-    /* tripoint.position = sf::Vector2f(_drawPoints[0].x, _drawPoints[0].y); */
-    /* _light.append(tripoint); */
 
     return _light;
 }
