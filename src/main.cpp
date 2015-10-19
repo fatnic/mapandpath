@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "mapparse.hpp"
+#include "pathfind.hpp"
 #include "vision.hpp"
 #include "tools/drawtools.hpp"
 
@@ -23,9 +24,19 @@ int main()
     sf::VertexArray lightShape;
 
     Vision vs(&mp, &window);
+    Pathfind pf(&mp);
+
     vs.setColour(sf::Color(255, 255, 255, 60));
 
     float fov = 60.f;
+
+    sf::CircleShape player(4);
+    player.setOrigin(player.getRadius(), player.getRadius());
+    player.setFillColor(sf::Color::Green);
+    player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
+
+    std::vector<Point*> waypoints;
+    bool pf_run{true};
 
     while(window.isOpen())
     {
@@ -42,16 +53,28 @@ int main()
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
             light.move(-1,0);
+            pf_run = true;
+        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
             light.move(1,0);
+            pf_run = true;
+        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        {
             light.move(0,-1);
+            pf_run = true;
+        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        {
             light.move(0,1);
+            pf_run = true;
+        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             fov += 0.2f;
@@ -59,10 +82,25 @@ int main()
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             fov -= 0.2f;
 
-        vs.setFOV(fov);
-
         int x = sf::Mouse::getPosition(window).x;
         int y = sf::Mouse::getPosition(window).y;
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            player.setPosition(x, y);
+            pf_run = true;
+        }
+
+        if(pf_run)
+        {
+            pf.setStart(light.getPosition().x, light.getPosition().y);
+            pf.setGoal(player.getPosition().x, player.getPosition().y);
+            waypoints.clear();
+            waypoints = pf.run();
+            pf_run = false;
+        }
+
+        vs.setFOV(fov);
 
         float heading = std::atan2(y - light.getPosition().y, x - light.getPosition().x);
         vs.setHeading(heading);
@@ -75,7 +113,17 @@ int main()
         lightShape = vs.run();
 
         window.draw(lightShape);
+
+        Point wp1(light.getPosition().x, light.getPosition().y);
+        for(Point*point : waypoints)
+        {
+            DrawTools::drawLine(wp1, *point, sf::Color::Magenta, &window);
+            wp1 = *point;
+        }
+
         window.draw(light);
+        window.draw(player);
+
         window.display();
     }
 }

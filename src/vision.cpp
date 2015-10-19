@@ -71,6 +71,7 @@ sf::VertexArray Vision::run()
         }
     }
 
+    std::unique(_angles.begin(), _angles.end());
     std::sort(_angles.begin(), _angles.end());
     auto it = std::find(_angles.begin(), _angles.end(), min_fov);
     std::rotate(_angles.begin(), it, _angles.end());
