@@ -47,34 +47,24 @@ sf::VertexArray Vision::run()
     float fov = Tools::deg2rad(_fov);
     float half_fov = fov / 2;
 
-    float minf = Tools::normalizeAngle(_heading - half_fov);
-    float maxf = Tools::normalizeAngle(_heading + half_fov);
+    float min_fov = Tools::normalizeAngle(_heading - half_fov);
+    float max_fov = Tools::normalizeAngle(_heading + half_fov);
     
-    Ray minFov;
-    minFov.start = getSource();
-    minFov.end.x = (int)minFov.start.x + raylineMax * std::cos(minf);
-    minFov.end.y = (int)minFov.start.y + raylineMax * std::sin(minf);
-    /* DrawTools::drawLine(minFov.start, minFov.end, sf::Color::Green, _window); */
-    
-    Ray maxFov;
-    maxFov.start = getSource();
-    maxFov.end.x = (int)maxFov.start.x + raylineMax * std::cos(maxf);
-    maxFov.end.y = (int)maxFov.start.y + raylineMax * std::sin(maxf);
-    /* DrawTools::drawLine(maxFov.start, maxFov.end, sf::Color::Green, _window); */
-
     _drawPoints.clear();
 
     std::vector<float> _angles;
 
-    _angles.push_back(minf);
-    _angles.push_back(maxf);
+    _angles.push_back(min_fov);
+    _angles.push_back(max_fov);
 
     for(Wall* wall : _mp->getWalls())
     {
         for(std::size_t i = 0; i < 4; i++)
         {
             float a = std::atan2(wall->points[i].y - getSource().y, wall->points[i].x - getSource().x);
-            if(!Tools::angleBetween(a, minf, maxf)) continue;
+
+            if(!Tools::angleBetween(a, min_fov, max_fov)) continue;
+
             _angles.push_back(Tools::normalizeAngle(a) - 0.000001);
             _angles.push_back(Tools::normalizeAngle(a));
             _angles.push_back(Tools::normalizeAngle(a) + 0.000001);
@@ -82,6 +72,8 @@ sf::VertexArray Vision::run()
     }
 
     std::sort(_angles.begin(), _angles.end());
+    auto it = std::find(_angles.begin(), _angles.end(), min_fov);
+    std::rotate(_angles.begin(), it, _angles.end());
 
     Ray ray;
     ray.start = getSource();
@@ -90,7 +82,6 @@ sf::VertexArray Vision::run()
     {
         ray.end.x = (int)ray.start.x + raylineMax * std::cos(angle);
         ray.end.y = (int)ray.start.y + raylineMax * std::sin(angle);
-        DrawTools::drawLine(ray.start, ray.end, sf::Color(255,255,255, 50), _window);
 
         std::vector<Point> intersections;
         for(Wall* wall : _mp->getWalls())
@@ -123,8 +114,8 @@ sf::VertexArray Vision::run()
         _light.append(tripoint);
     }
 
-    tripoint.position = sf::Vector2f(_drawPoints[0].x, _drawPoints[0].y);
-    _light.append(tripoint);
+    /* tripoint.position = sf::Vector2f(_drawPoints[0].x, _drawPoints[0].y); */
+    /* _light.append(tripoint); */
 
     return _light;
 }
