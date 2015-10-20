@@ -23,7 +23,7 @@ private:
     sf::Color _colour;
     std::vector<RayLine*> _raylines;
     std::vector<Point> _drawPoints;
-    float raylineMax;
+    float _raylineMax;
     float _fov;
     float _heading;
 

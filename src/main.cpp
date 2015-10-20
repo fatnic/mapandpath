@@ -29,6 +29,7 @@ int main()
     vs.setColour(sf::Color(255, 255, 255, 60));
 
     float fov = 60.f;
+    vs.setFOV(fov);
 
     sf::CircleShape player(4);
     player.setOrigin(player.getRadius(), player.getRadius());
@@ -36,7 +37,7 @@ int main()
     player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
 
     std::vector<Point*> waypoints;
-    bool pf_run{true};
+    bool moved{true};
 
     while(window.isOpen())
     {
@@ -52,55 +53,64 @@ int main()
 
         }
 
+        int x = sf::Mouse::getPosition(window).x;
+        int y = sf::Mouse::getPosition(window).y;
+
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {
             light.move(-1,0);
-            pf_run = true;
+            moved = true;
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         {
             light.move(1,0);
-            pf_run = true;
+            moved = true;
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
         {
             light.move(0,-1);
-            pf_run = true;
+            moved = true;
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         {
             light.move(0,1);
-            pf_run = true;
+            moved = true;
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            fov += 0.2f;
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            fov -= 0.2f;
-
-        int x = sf::Mouse::getPosition(window).x;
-        int y = sf::Mouse::getPosition(window).y;
-
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            player.setPosition(x, y);
-            pf_run = true;
-        }
-
-        if(pf_run)
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
         {
             pf.setStart(light.getPosition().x, light.getPosition().y);
             pf.setGoal(player.getPosition().x, player.getPosition().y);
             waypoints.clear();
             waypoints = pf.run();
-            pf_run = false;
         }
 
-        vs.setFOV(fov);
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            fov += 0.2f;
+            vs.setFOV(fov);
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            fov -= 0.2f;
+            vs.setFOV(fov);
+        }
+
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            player.setPosition(x, y);
+            moved = true;
+        }
+
+        if(moved)
+        {
+            waypoints.clear();
+            moved = false;
+        }
 
         float heading = std::atan2(y - light.getPosition().y, x - light.getPosition().x);
         vs.setHeading(heading);
@@ -109,7 +119,6 @@ int main()
         mp.draw(&window);
 
         vs.setSource(Point(light.getPosition().x, light.getPosition().y));
-
         lightShape = vs.run();
 
         window.draw(lightShape);

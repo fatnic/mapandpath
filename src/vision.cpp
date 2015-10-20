@@ -8,7 +8,7 @@ Vision::Vision(MapParse* mp, sf::RenderWindow* window)
     ,_window(window)
     ,_fov(360)
 {
-    raylineMax = std::sqrt((_mp->getMapSize().x * _mp->getMapSize().x) + (_mp->getMapSize().y * _mp->getMapSize().y));
+    _raylineMax = std::sqrt((_mp->getMapSize().x * _mp->getMapSize().x) + (_mp->getMapSize().y * _mp->getMapSize().y));
 }
 
 void Vision::setSource(Point source)
@@ -82,8 +82,8 @@ sf::VertexArray Vision::run()
 
     for(float angle : _angles)
     {
-        ray.end.x = (int)ray.start.x + raylineMax * std::cos(angle);
-        ray.end.y = (int)ray.start.y + raylineMax * std::sin(angle);
+        ray.end.x = (int)ray.start.x + _raylineMax * std::cos(angle);
+        ray.end.y = (int)ray.start.y + _raylineMax * std::sin(angle);
 
         std::vector<Point> intersections;
         for(Wall* wall : _mp->getWalls())
