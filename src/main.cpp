@@ -21,13 +21,13 @@ int main()
     light.setFillColor(sf::Color::Yellow);
     light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
-    Vision vs(&mp);
+    Vision vision(&mp);
     Pathfind pf(&mp);
 
-    vs.setColour(sf::Color(255, 255, 255, 60));
+    vision.setColour(sf::Color(255, 255, 255, 60));
 
     float fov = 60.f;
-    vs.setFOV(fov);
+    vision.setFOV(fov);
 
     sf::CircleShape player(4);
     player.setOrigin(player.getRadius(), player.getRadius());
@@ -89,13 +89,13 @@ int main()
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
             fov += 0.2f;
-            vs.setFOV(fov);
+            vision.setFOV(fov);
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
             fov -= 0.2f;
-            vs.setFOV(fov);
+            vision.setFOV(fov);
         }
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -111,15 +111,14 @@ int main()
         }
 
         float heading = std::atan2(y - light.getPosition().y, x - light.getPosition().x);
-        vs.setHeading(heading);
+        vision.setHeading(heading);
 
         window.clear(sf::Color::Red);
         window.draw(mp);
 
-        vs.setSource(Point(light.getPosition().x, light.getPosition().y));
-        vs.run();
+        vision.setSource(Point(light.getPosition().x, light.getPosition().y));
 
-        window.draw(vs);
+        window.draw(vision);
         window.draw(light);
         window.draw(player);
 

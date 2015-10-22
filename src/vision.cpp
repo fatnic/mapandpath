@@ -16,6 +16,7 @@ Vision::Vision(MapParse* mp)
 void Vision::setSource(Point source)
 {
     _source = source;
+    run();
 }
 
 void Vision::setHeading(float angle)
