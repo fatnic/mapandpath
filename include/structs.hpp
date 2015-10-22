@@ -5,18 +5,15 @@
 
 typedef sf::Vector2<double> Point;
 
+/* std::ostream& operator<<(std::ostream& os, const Point& p) */
+/* { */
+/*     os << p.x << ":" << p.y; */
+/*     return os; */
+/* }; */
+
 struct Ray
 {
     Point start, end;
-};
-
-struct RayLine
-{
-    Ray ray;
-    Point point;
-    double angle;
-    bool isBoundary;
-    std::vector<Point> intersections;
 };
 
 struct Segment

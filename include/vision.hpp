@@ -21,14 +21,9 @@ private:
     sf::RenderWindow* _window;
     Point _source;
     sf::Color _colour;
-    std::vector<RayLine*> _raylines;
     std::vector<Point> _drawPoints;
     float _raylineMax;
     float _fov;
     float _heading;
-
-    bool isSegmentFacing(Segment* segment, int segmentNum);
-    bool isPointBoundary(Wall* wall, int pointNum); 
-    RayLine* calcRayLine(Wall* wall, int pointNum);
 };
 #endif /* !_VISION_HPP */

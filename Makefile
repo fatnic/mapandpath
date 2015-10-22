@@ -6,7 +6,7 @@ TARGET := bin/exec
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -std=c++11 # -Wall
+CFLAGS := -g -std=c++11 -Wall
 LIB := -lsfml-window -lsfml-system -lsfml-graphics
 INC := -I include
 

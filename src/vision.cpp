@@ -2,6 +2,7 @@
 #include "tools/tools.hpp"
 #include "tools/drawtools.hpp"
 #include <iostream>
+#include <cmath>
 
 Vision::Vision(MapParse* mp, sf::RenderWindow* window)
     :_mp(mp)
@@ -75,44 +76,40 @@ sf::VertexArray Vision::run()
     std::sort(_angles.begin(), _angles.end());
     auto it = std::find(_angles.begin(), _angles.end(), min_fov);
     std::rotate(_angles.begin(), it, _angles.end());
-    //TODO: Work out why first point sometimes gets repeated...
 
     Ray ray;
     ray.start = getSource();
 
+    Point intersection;
     for(float angle : _angles)
     {
         ray.end.x = (int)ray.start.x + _raylineMax * std::cos(angle);
         ray.end.y = (int)ray.start.y + _raylineMax * std::sin(angle);
 
-        std::vector<Point> intersections;
+        Point closestIntersection(-1000,-1000);
         for(Wall* wall : _mp->getWalls())
         {
             for(std::size_t i = 0; i < 4; i++)
             {
-                Point intersection;
                 if(Tools::getIntersection(ray, wall->segments[i], intersection))
                 {
-                    intersections.push_back(intersection);
+                    if(Tools::distance(intersection, ray.start) < Tools::distance(closestIntersection, ray.start))
+                        closestIntersection = intersection;
                 }
             }
         }
 
-        // TODO: Get rid of this.. refactor to simple closestIntersection = least distance
-        std::unique(intersections.begin(), intersections.end());
-        std::sort(intersections.begin(), intersections.end(), [&](Point& p1, Point& p2){ return Tools::distance(p1, ray.start) < Tools::distance(p2, ray.start); });
-
-        _drawPoints.push_back(intersections[0]);
+        _drawPoints.push_back(closestIntersection);
     }
-
+    
     sf::Vertex tripoint;
     tripoint.position = sf::Vector2f(getSource().x, getSource().y);
     tripoint.color = _colour;
     _light.append(tripoint);
 
-    for(std::size_t i = 0; i < _drawPoints.size(); i++)
+    for(Point& p : _drawPoints)
     {
-        tripoint.position = sf::Vector2f(_drawPoints[i].x, _drawPoints[i].y);
+        tripoint.position = sf::Vector2f(p.x, p.y);
         _light.append(tripoint);
     }
 
