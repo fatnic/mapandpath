@@ -2,10 +2,11 @@
 #define _MAPPARSE_HPP
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 #include "pugixml.hpp"
 #include "structs.hpp"
 
-class MapParse
+class MapParse : public sf::Drawable
 {
 public:
     MapParse();
@@ -15,7 +16,7 @@ public:
     sf::Vector2i getGridSize();
     std::vector<Wall*> getWalls();
     Point getSpawnPoint(const char* name);
-    void draw(sf::RenderWindow* window);
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 private:
     pugi::xml_document tmx;
     sf::Vector2i _tile;

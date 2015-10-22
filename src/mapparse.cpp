@@ -91,10 +91,10 @@ Point MapParse::getSpawnPoint(const char* name)
     return spawn;
 }
 
-void MapParse::draw(sf::RenderWindow* window)
+void MapParse::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::RectangleShape bg;
     bg.setSize(sf::Vector2f(_map.x, _map.y));
     bg.setTexture(texture);
-    window->draw(bg);
+    target.draw(bg, states);
 }

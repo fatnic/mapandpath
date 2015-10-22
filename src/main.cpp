@@ -116,7 +116,7 @@ int main()
         vs.setHeading(heading);
 
         window.clear(sf::Color::Red);
-        mp.draw(&window);
+        window.draw(mp);
 
         vs.setSource(Point(light.getPosition().x, light.getPosition().y));
         lightShape = vs.run();
