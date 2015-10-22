@@ -4,11 +4,12 @@
 #include <iostream>
 #include <cmath>
 
-Vision::Vision(MapParse* mp, sf::RenderWindow* window)
+Vision::Vision(MapParse* mp)
     :_mp(mp)
-    ,_window(window)
+    , _light()
     ,_fov(360)
 {
+    _light.setPrimitiveType(sf::TrianglesFan);
     _raylineMax = std::sqrt((_mp->getMapSize().x * _mp->getMapSize().x) + (_mp->getMapSize().y * _mp->getMapSize().y));
 }
 
@@ -37,21 +38,19 @@ Point Vision::getSource()
     return _source;
 }
 
-sf::VertexArray Vision::run()
+void Vision::run()
 {
-    sf::VertexArray _light;
-    _light.setPrimitiveType(sf::TrianglesFan);
+    _drawPoints.clear();
+    _light.clear();
 
-    if(getSource().x < 0 || getSource().x > _mp->getMapSize().x) return _light;
-    if(getSource().y < 0 || getSource().y > _mp->getMapSize().y) return _light;
+    if(getSource().x < 0 || getSource().x > _mp->getMapSize().x) return;
+    if(getSource().y < 0 || getSource().y > _mp->getMapSize().y) return;
 
     float fov = Tools::deg2rad(_fov);
     float half_fov = fov / 2;
 
     float min_fov = Tools::normalizeAngle(_heading - half_fov);
     float max_fov = Tools::normalizeAngle(_heading + half_fov);
-    
-    _drawPoints.clear();
 
     std::vector<float> _angles;
 
@@ -113,7 +112,11 @@ sf::VertexArray Vision::run()
         _light.append(tripoint);
     }
 
-    return _light;
+}
+
+void Vision::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(_light, states);    
 }
 
 Vision::~Vision()

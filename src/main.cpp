@@ -21,9 +21,7 @@ int main()
     light.setFillColor(sf::Color::Yellow);
     light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
-    sf::VertexArray lightShape;
-
-    Vision vs(&mp, &window);
+    Vision vs(&mp);
     Pathfind pf(&mp);
 
     vs.setColour(sf::Color(255, 255, 255, 60));
@@ -119,17 +117,9 @@ int main()
         window.draw(mp);
 
         vs.setSource(Point(light.getPosition().x, light.getPosition().y));
-        lightShape = vs.run();
+        vs.run();
 
-        window.draw(lightShape);
-
-        Point wp1(light.getPosition().x, light.getPosition().y);
-        for(Point*point : waypoints)
-        {
-            DrawTools::drawLine(wp1, *point, sf::Color::Magenta, &window);
-            wp1 = *point;
-        }
-
+        window.draw(vs);
         window.draw(light);
         window.draw(player);
 
