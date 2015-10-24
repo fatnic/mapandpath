@@ -101,7 +101,7 @@ void Vision::run()
 
         _drawPoints.push_back(closestIntersection);
     }
-    
+
     sf::Vertex tripoint;
     tripoint.position = sf::Vector2f(getSource().x, getSource().y);
     tripoint.color = _colour;
@@ -113,11 +113,56 @@ void Vision::run()
         _light.append(tripoint);
     }
 
+    for(auto* segment : _segments)
+        delete segment;
+    _segments.clear();
+
+    Point a = getSource();
+    Point b = _drawPoints.front();
+    Segment* segment = new Segment(a, b);
+    _segments.push_back(segment);
+
+    for(std::size_t i = 0; i < _drawPoints.size() - 1; i++)
+    {
+        Point a = _drawPoints[i];
+        Point b = (i+1 > _drawPoints.size()) ? getSource() : _drawPoints[i+1];
+        Segment* segment = new Segment(a, b);
+        _segments.push_back(segment);
+    }
+
+    a = _drawPoints.back();
+    b = getSource();
+    segment = new Segment(a, b);
+    _segments.push_back(segment);
+
+}
+
+std::vector<Segment*> Vision::getSegments()
+{
+    return _segments;
+}
+
+bool Vision::contains(Point point)
+{
+    if(_light.getBounds().contains(point.x, point.y))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void Vision::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_light, states);    
+
+    /* sf::RectangleShape rect; */
+    /* rect.setPosition(_light.getBounds().left, _light.getBounds().top); */
+    /* rect.setSize(sf::Vector2f(_light.getBounds().width, _light.getBounds().height)); */
+    /* rect.setFillColor(sf::Color(0,0,0,0)); */
+    /* rect.setOutlineColor(sf::Color::Green); */
+    /* rect.setOutlineThickness(1.0f); */
+    /* target.draw(rect); */
 }
 
 Vision::~Vision()

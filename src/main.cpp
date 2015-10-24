@@ -21,6 +21,11 @@ int main()
     light.setFillColor(sf::Color::Yellow);
     light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
+    sf::CircleShape player(4);
+    player.setOrigin(player.getRadius(), player.getRadius());
+    player.setFillColor(sf::Color::Green);
+    player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
+
     Vision vision(&mp);
     Pathfind pf(&mp);
 
@@ -28,11 +33,6 @@ int main()
 
     float fov = 60.f;
     vision.setFOV(fov);
-
-    sf::CircleShape player(4);
-    player.setOrigin(player.getRadius(), player.getRadius());
-    player.setFillColor(sf::Color::Green);
-    player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
 
     std::vector<Point*> waypoints;
     bool moved{true};
@@ -118,7 +118,21 @@ int main()
 
         vision.setSource(Point(light.getPosition().x, light.getPosition().y));
 
+        sf::Color pColour = vision.contains( Point(player.getPosition().x, player.getPosition().y )) ? sf::Color::Red : sf::Color::Green;
+        player.setFillColor(pColour);
+
         window.draw(vision);
+
+        for(Segment* seg : vision.getSegments())
+            DrawTools::drawLine(seg->p1, seg->p2, sf::Color::White, &window);
+
+        Point wp1(light.getPosition().x, light.getPosition().y);
+        for(Point*point : waypoints)
+        {
+            DrawTools::drawLine(wp1, *point, sf::Color::Magenta, &window);
+            wp1 = *point;
+        }
+
         window.draw(light);
         window.draw(player);
 
