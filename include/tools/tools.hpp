@@ -97,14 +97,25 @@ public:
         return deg2rad(x);
     }
     
-    static inline bool angleBetween(float _angle, float _min, float _max)
+    static inline bool degreesBetween(float _angle, float _min, float _max)
+    {
+        float angle = std::fmod(360 + _angle, 360);
+        float min = std::fmod(3600000 + _min, 360);
+        float max = std::fmod(3600000 + _max, 360);
+
+        if(min < max) return (min <= angle && angle <= max);
+
+        return (min <= angle || angle <= max);
+    }
+
+    // Need this to be radians to stop the buggy shit...
+    static inline bool radiansBetween(float _angle, float _min, float _max)
     {
         float angle = std::fmod(360 + (rad2deg(_angle)), 360);
-        float min = std::fmod(3600000 + rad2deg(_min), 360);
-        float max = std::fmod(3600000 + rad2deg(_max), 360);
+        float min = std::fmod(36000 + rad2deg(_min), 360);
+        float max = std::fmod(36000 + rad2deg(_max), 360);
 
-        if(min < max)
-            return (min <= angle && angle <= max);
+        if(min < max) return (min <= angle && angle <= max);
 
         return (min <= angle || angle <= max);
     }

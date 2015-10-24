@@ -21,14 +21,15 @@ int main()
     light.setFillColor(sf::Color::Yellow);
     light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
-    sf::CircleShape player(4);
-    player.setOrigin(player.getRadius(), player.getRadius());
+    sf::RectangleShape player;
+    player.setSize(sf::Vector2f(10, 10));
+    player.setOrigin(player.getGlobalBounds().width/2, player.getGlobalBounds().height/2);
     player.setFillColor(sf::Color::Green);
     player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
 
-    Vision vision(&mp);
     Pathfind pf(&mp);
 
+    Vision vision(&mp);
     vision.setColour(sf::Color(255, 255, 255, 60));
 
     float fov = 60.f;
@@ -135,7 +136,6 @@ int main()
 
         window.draw(light);
         window.draw(player);
-
         window.display();
     }
 }

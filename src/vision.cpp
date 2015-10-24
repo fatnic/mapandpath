@@ -64,11 +64,11 @@ void Vision::run()
         {
             float a = std::atan2(wall->points[i].y - getSource().y, wall->points[i].x - getSource().x);
 
-            if(!Tools::angleBetween(a, min_fov, max_fov)) continue;
+            if(!Tools::radiansBetween(a, min_fov, max_fov)) continue;
 
-            _angles.push_back(Tools::normalizeAngle(a) - 0.00001);
+            _angles.push_back(Tools::normalizeAngle(a) - 0.0001);
             _angles.push_back(Tools::normalizeAngle(a));
-            _angles.push_back(Tools::normalizeAngle(a) + 0.00001);
+            _angles.push_back(Tools::normalizeAngle(a) + 0.0001);
         }
     }
 
