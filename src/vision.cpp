@@ -66,8 +66,6 @@ void Vision::run()
     /* maxf.end.y = (int)maxf.start.y + _raylineMax * std::sin(max_fov); */
     /* DrawTools::drawLine(maxf.start, maxf.end, sf::Color::Blue, _window); */
 
-    /* std::cout << min_fov << std::endl; */
-
     std::vector<float> _angles;
 
     _angles.push_back(min_fov);
@@ -128,28 +126,6 @@ void Vision::run()
         _light.append(tripoint);
     }
 
-    for(auto* segment : _segments)
-        delete segment;
-    _segments.clear();
-
-    Point a = getSource();
-    Point b = _drawPoints.front();
-    Segment* segment = new Segment(a, b);
-    _segments.push_back(segment);
-
-    for(std::size_t i = 0; i < _drawPoints.size() - 1; i++)
-    {
-        Point a = _drawPoints[i];
-        Point b = (i+1 > _drawPoints.size()) ? getSource() : _drawPoints[i+1];
-        Segment* segment = new Segment(a, b);
-        _segments.push_back(segment);
-    }
-
-    a = _drawPoints.back();
-    b = getSource();
-    segment = new Segment(a, b);
-    _segments.push_back(segment);
-
 }
 
 std::vector<Segment*> Vision::getSegments()
@@ -157,11 +133,22 @@ std::vector<Segment*> Vision::getSegments()
     return _segments;
 }
 
-bool Vision::contains(Point point)
+bool Vision::collision(sf::Shape& other)
 {
-    if(_light.getBounds().contains(point.x, point.y))
+    Point p(other.getPosition().x, other.getPosition().y);
+
+    if(!_light.getBounds().contains(p.x, p.y)) return false;
+
+    for(std::size_t i = 0; i < _drawPoints.size(); i++)
     {
-        return true;
+        if (i == _drawPoints.size() - 1)  return false;
+
+        Point t1 = getSource();
+        Point t2 = _drawPoints[i];
+        Point t3 = _drawPoints[i+1];
+
+        if(Tools::pointInTriangle(t1, t2, t3, p))
+            return true;
     }
 
     return false;

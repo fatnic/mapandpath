@@ -1,5 +1,5 @@
 #include "mapparse.hpp"
-#include "pugixml.hpp"
+/* #include "pugixml.hpp" */
 #include <iostream>
 
 MapParse::MapParse()

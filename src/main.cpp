@@ -6,6 +6,17 @@
 
 #include <iostream>
 
+class Player : public sf::RectangleShape
+{
+public:
+    Player()
+    {
+        setSize(sf::Vector2f(10,10));
+        setFillColor(sf::Color::Green);
+        setOrigin(getGlobalBounds().width / 2, getGlobalBounds().height / 2);
+    }
+};
+
 int main()
 {
     sf::ContextSettings settings;
@@ -21,10 +32,7 @@ int main()
     light.setFillColor(sf::Color::Yellow);
     light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
-    sf::RectangleShape player;
-    player.setSize(sf::Vector2f(10, 10));
-    player.setOrigin(player.getGlobalBounds().width/2, player.getGlobalBounds().height/2);
-    player.setFillColor(sf::Color::Green);
+    Player player;
     player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
 
     Pathfind pf(&mp);
@@ -119,13 +127,13 @@ int main()
 
         vision.setSource(Point(light.getPosition().x, light.getPosition().y));
 
-        sf::Color pColour = vision.contains( Point(player.getPosition().x, player.getPosition().y )) ? sf::Color::Red : sf::Color::Green;
+        sf::Color pColour = vision.collision(player) ? sf::Color::Red : sf::Color::Green;
         player.setFillColor(pColour);
 
         window.draw(vision);
 
-        /* for(Segment* seg : vision.getSegments()) */
-        /*     DrawTools::drawLine(seg->p1, seg->p2, sf::Color::White, &window); */
+        for(Segment* seg : vision.getSegments())
+            DrawTools::drawLine(seg->p1, seg->p2, sf::Color::White, &window);
 
         Point wp1(light.getPosition().x, light.getPosition().y);
         for(Point*point : waypoints)

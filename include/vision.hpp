@@ -16,13 +16,13 @@ public:
     void setColour(sf::Color colour);
     std::vector<Segment*> getSegments();
     Point getSource();
-    bool contains(Point point);
+    bool collision(sf::Shape& other);
     void run();
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     ~Vision();
 private:
     MapParse* _mp;
-    sf::RenderWindow* _window;
+    sf::RenderWindow* _window; // Delete this when done debugging... and the one passed to the constructor
     sf::VertexArray _light;
     Point _source;
     sf::Color _colour;
