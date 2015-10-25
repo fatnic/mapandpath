@@ -128,17 +128,13 @@ void Vision::run()
 
 }
 
-std::vector<Segment*> Vision::getSegments()
-{
-    return _segments;
-}
-
 bool Vision::collision(sf::Shape& other)
 {
     Point p(other.getPosition().x, other.getPosition().y);
 
     if(!_light.getBounds().contains(p.x, p.y)) return false;
 
+    // TODO: for each point of other global bounds...
     for(std::size_t i = 0; i < _drawPoints.size(); i++)
     {
         if (i == _drawPoints.size() - 1)  return false;

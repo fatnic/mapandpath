@@ -23,9 +23,13 @@ int main()
     settings.antialiasingLevel = 8;
 
     MapParse mp;
-    mp.load("assets/lightmap.tmx");
+    mp.load("assets/large.tmx");
 
     sf::RenderWindow window(sf::VideoMode(mp.getMapSize().x, mp.getMapSize().y), "GameWindow", sf::Style::Default, settings);
+
+    sf::Shader shader;
+    shader.loadFromFile("assets/shader.frag", sf::Shader::Fragment);
+    shader.setParameter("opacity", 0.3);
 
     sf::CircleShape light(4);
     light.setOrigin(light.getRadius(), light.getRadius());
@@ -38,7 +42,7 @@ int main()
     Pathfind pf(&mp);
 
     Vision vision(&mp, &window);
-    vision.setColour(sf::Color(255, 255, 255, 60));
+    vision.setColour(sf::Color(255, 255, 255));
 
     float fov = 60.f;
     vision.setFOV(fov);
@@ -119,6 +123,7 @@ int main()
             moved = false;
         }
 
+
         float heading = std::atan2(y - light.getPosition().y, x - light.getPosition().x);
         vision.setHeading(heading);
 
@@ -130,10 +135,7 @@ int main()
         sf::Color pColour = vision.collision(player) ? sf::Color::Red : sf::Color::Green;
         player.setFillColor(pColour);
 
-        window.draw(vision);
-
-        for(Segment* seg : vision.getSegments())
-            DrawTools::drawLine(seg->p1, seg->p2, sf::Color::White, &window);
+        window.draw(vision, &shader);
 
         Point wp1(light.getPosition().x, light.getPosition().y);
         for(Point*point : waypoints)
@@ -143,8 +145,7 @@ int main()
         }
 
         window.draw(light);
-        if(vision.collision(player))
-            window.draw(player);
+        window.draw(player);
         window.display();
     }
 }
