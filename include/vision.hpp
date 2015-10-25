@@ -9,7 +9,7 @@
 class Vision : public sf::Drawable
 {
 public:
-    Vision(MapParse* mp);
+    Vision(MapParse* mp, sf::RenderWindow* window);
     void setSource(Point source);
     void setHeading(float angle);
     void setFOV(float angle);
@@ -22,6 +22,7 @@ public:
     ~Vision();
 private:
     MapParse* _mp;
+    sf::RenderWindow* _window;
     sf::VertexArray _light;
     Point _source;
     sf::Color _colour;

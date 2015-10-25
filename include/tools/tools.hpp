@@ -86,15 +86,15 @@ public:
 
     static inline float rad2deg(float rad)
     {
-        return (rad * 180) / M_PI;
+        return (rad * 180.f) / M_PI;
     }
 
-    static inline float normalizeAngle(float a)
+    static inline float normalizeRad(float a)
     {
-        float x = std::fmod(rad2deg(a), 360);
+        float x = std::fmod(a, 2*M_PI);
         if(x < 0)
-            x += 360;
-        return deg2rad(x);
+            x += 2*M_PI;
+        return x;
     }
     
     static inline bool degreesBetween(float _angle, float _min, float _max)
@@ -109,11 +109,17 @@ public:
     }
 
     // Need this to be radians to stop the buggy shit...
+    static inline bool radiansBetween2(float _angle, float _min, float _max)
+    {
+        return false;
+    }
+
+    
     static inline bool radiansBetween(float _angle, float _min, float _max)
     {
         float angle = std::fmod(360 + (rad2deg(_angle)), 360);
-        float min = std::fmod(36000 + rad2deg(_min), 360);
-        float max = std::fmod(36000 + rad2deg(_max), 360);
+        float min = std::fmod(360000 + rad2deg(_min), 360);
+        float max = std::fmod(360000 + rad2deg(_max), 360);
 
         if(min < max) return (min <= angle && angle <= max);
 

@@ -4,8 +4,9 @@
 #include <iostream>
 #include <cmath>
 
-Vision::Vision(MapParse* mp)
+Vision::Vision(MapParse* mp, sf::RenderWindow* window)
     :_mp(mp)
+    , _window(window)
     , _light()
     ,_fov(360)
 {
@@ -50,8 +51,22 @@ void Vision::run()
     float fov = Tools::deg2rad(_fov);
     float half_fov = fov / 2;
 
-    float min_fov = Tools::normalizeAngle(_heading - half_fov);
-    float max_fov = Tools::normalizeAngle(_heading + half_fov);
+    float min_fov = Tools::normalizeRad(_heading - half_fov);
+    float max_fov = Tools::normalizeRad(_heading + half_fov);
+
+    /* Ray minf; */
+    /* minf.start = getSource(); */
+    /* minf.end.x = (int)minf.start.x + _raylineMax * std::cos(min_fov); */
+    /* minf.end.y = (int)minf.start.y + _raylineMax * std::sin(min_fov); */
+    /* DrawTools::drawLine(minf.start, minf.end, sf::Color::Blue, _window); */
+
+    /* Ray maxf; */
+    /* maxf.start = getSource(); */
+    /* maxf.end.x = (int)maxf.start.x + _raylineMax * std::cos(max_fov); */
+    /* maxf.end.y = (int)maxf.start.y + _raylineMax * std::sin(max_fov); */
+    /* DrawTools::drawLine(maxf.start, maxf.end, sf::Color::Blue, _window); */
+
+    /* std::cout << min_fov << std::endl; */
 
     std::vector<float> _angles;
 
@@ -66,9 +81,9 @@ void Vision::run()
 
             if(!Tools::radiansBetween(a, min_fov, max_fov)) continue;
 
-            _angles.push_back(Tools::normalizeAngle(a) - 0.0001);
-            _angles.push_back(Tools::normalizeAngle(a));
-            _angles.push_back(Tools::normalizeAngle(a) + 0.0001);
+            _angles.push_back(Tools::normalizeRad(a) - 0.0001);
+            _angles.push_back(Tools::normalizeRad(a));
+            _angles.push_back(Tools::normalizeRad(a) + 0.0001);
         }
     }
 

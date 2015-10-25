@@ -29,7 +29,7 @@ int main()
 
     Pathfind pf(&mp);
 
-    Vision vision(&mp);
+    Vision vision(&mp, &window);
     vision.setColour(sf::Color(255, 255, 255, 60));
 
     float fov = 60.f;
@@ -124,8 +124,8 @@ int main()
 
         window.draw(vision);
 
-        for(Segment* seg : vision.getSegments())
-            DrawTools::drawLine(seg->p1, seg->p2, sf::Color::White, &window);
+        /* for(Segment* seg : vision.getSegments()) */
+        /*     DrawTools::drawLine(seg->p1, seg->p2, sf::Color::White, &window); */
 
         Point wp1(light.getPosition().x, light.getPosition().y);
         for(Point*point : waypoints)
