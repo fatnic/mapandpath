@@ -127,10 +127,12 @@ public:
 
     static inline bool pointInTriangle(Point t1, Point t2, Point t3, Point p)
     {
-        float denominator = ((t2.y-t3.y)*(t1.x-t3.x) + (t3.x-t2.x)*(t1.y-t3.y));
-        float a = ((t2.y-t3.y)*(p.x-t3.x) + (t3.x-t2.x)*(p.y-t3.y)) / denominator;
-        float b = ((t3.y-t1.y)*(p.x-t3.x) + (t1.x-t3.x)*(p.y-t3.y)) / denominator;
+        float d = ((t2.y-t3.y)*(t1.x-t3.x) + (t3.x-t2.x)*(t1.y-t3.y));
+
+        float a = ((t2.y-t3.y)*(p.x-t3.x) + (t3.x-t2.x)*(p.y-t3.y)) / d;
+        float b = ((t3.y-t1.y)*(p.x-t3.x) + (t1.x-t3.x)*(p.y-t3.y)) / d;
         float c = 1 - a - b;
+        
         return 0 <= a && a <= 1 && 0 <= b && b <= 1 && 0 <= c && c <= 1;
     }
 };

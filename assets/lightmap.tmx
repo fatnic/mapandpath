@@ -1297,7 +1297,7 @@
   <object id="70" name="light" x="336" y="96">
    <ellipse/>
   </object>
-  <object id="89" name="player" x="336" y="438">
+  <object id="89" name="player" x="128" y="304">
    <ellipse/>
   </object>
  </objectgroup>

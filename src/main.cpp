@@ -143,7 +143,8 @@ int main()
         }
 
         window.draw(light);
-        window.draw(player);
+        if(vision.collision(player))
+            window.draw(player);
         window.display();
     }
 }
