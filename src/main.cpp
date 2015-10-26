@@ -29,7 +29,6 @@ int main()
 
     sf::Shader shader;
     shader.loadFromFile("assets/shader.frag", sf::Shader::Fragment);
-    shader.setParameter("opacity", 0.3);
 
     sf::CircleShape light(4);
     light.setOrigin(light.getRadius(), light.getRadius());

@@ -130,21 +130,28 @@ void Vision::run()
 
 bool Vision::collision(sf::Shape& other)
 {
-    Point p(other.getPosition().x, other.getPosition().y);
+    if(!_light.getBounds().intersects(other.getGlobalBounds())) return false;
 
-    if(!_light.getBounds().contains(p.x, p.y)) return false;
+    sf::FloatRect ogb = other.getGlobalBounds();
+    Point boundingBoxPoints[4];
 
-    // TODO: for each point of other global bounds...
-    for(std::size_t i = 0; i < _drawPoints.size(); i++)
+    boundingBoxPoints[0] = Point(ogb.left, ogb.top);
+    boundingBoxPoints[1] = Point(ogb.left + ogb.width, ogb.top);
+    boundingBoxPoints[2] = Point(ogb.left + ogb.width, ogb.top + ogb.height);
+    boundingBoxPoints[3] = Point(ogb.left, ogb.top + ogb.height);
+
+    for(std::size_t j = 0; j < 4; j++)
     {
-        if (i == _drawPoints.size() - 1)  return false;
+        for(std::size_t i = 0; i < _drawPoints.size(); i++)
+        {
+            if (i == _drawPoints.size() - 1) continue;
 
-        Point t1 = getSource();
-        Point t2 = _drawPoints[i];
-        Point t3 = _drawPoints[i+1];
+            Point t1 = getSource();
+            Point t2 = _drawPoints[i];
+            Point t3 = _drawPoints[i+1];
 
-        if(Tools::pointInTriangle(t1, t2, t3, p))
-            return true;
+            if(Tools::pointInTriangle(t1, t2, t3, boundingBoxPoints[j])) return true;
+        }
     }
 
     return false;
