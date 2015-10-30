@@ -1,21 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include "mapparse.hpp"
-#include "pathfind.hpp"
 #include "vision.hpp"
-#include "tools/drawtools.hpp"
+#include "player.hpp"
 
 #include <iostream>
-
-class Player : public sf::RectangleShape
-{
-public:
-    Player()
-    {
-        setSize(sf::Vector2f(10,10));
-        setFillColor(sf::Color::Green);
-        setOrigin(getGlobalBounds().width / 2, getGlobalBounds().height / 2);
-    }
-};
 
 int main()
 {
@@ -27,27 +15,27 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(mp.getMapSize().x, mp.getMapSize().y), "GameWindow", sf::Style::Default, settings);
 
-    sf::Shader shader;
-    shader.loadFromFile("assets/shader.frag", sf::Shader::Fragment);
-
     sf::CircleShape light(4);
     light.setOrigin(light.getRadius(), light.getRadius());
     light.setFillColor(sf::Color::Yellow);
     light.setPosition(mp.getSpawnPoint("light").x, mp.getSpawnPoint("light").y);
 
-    Player player;
-    player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
-
-    Pathfind pf(&mp);
-
     Vision vision(&mp, &window);
-    vision.setColour(sf::Color(255, 255, 255));
+
+    sf::Shader shader;
+    shader.loadFromFile("assets/shader.frag", sf::Shader::Fragment);
+    shader.setParameter("color", sf::Vector3f(1.0, 1.0, 1.0));
+    shader.setParameter("opacity", 0.4f);
 
     float fov = 60.f;
     vision.setFOV(fov);
 
-    std::vector<Point*> waypoints;
-    bool moved{true};
+    Player player;
+    player.setPosition(mp.getSpawnPoint("player").x, mp.getSpawnPoint("player").y);
+    player._window = &window;
+    player._mp = &mp;
+
+    sf::Clock clock;
 
     while(window.isOpen())
     {
@@ -66,62 +54,21 @@ int main()
         int x = sf::Mouse::getPosition(window).x;
         int y = sf::Mouse::getPosition(window).y;
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        {
-            light.move(-1,0);
-            moved = true;
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        {
-            light.move(1,0);
-            moved = true;
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        {
-            light.move(0,-1);
-            moved = true;
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        {
-            light.move(0,1);
-            moved = true;
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-        {
-            pf.setStart(light.getPosition().x, light.getPosition().y);
-            pf.setGoal(player.getPosition().x, player.getPosition().y);
-            waypoints.clear();
-            waypoints = pf.run();
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            fov += 0.2f;
-            vision.setFOV(fov);
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            fov -= 0.2f;
-            vision.setFOV(fov);
-        }
-
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
-            player.setPosition(x, y);
-            moved = true;
+            bool blocked{false};
+
+            for(Wall* wall : mp.getWalls())
+            {
+                if(wall->AABB.contains(x, y))
+                    blocked = true;
+            }
+
+            if(!blocked)
+                light.setPosition(x, y);
         }
 
-        if(moved)
-        {
-            waypoints.clear();
-            moved = false;
-        }
-
+        float delta = clock.restart().asSeconds();
 
         float heading = std::atan2(y - light.getPosition().y, x - light.getPosition().x);
         vision.setHeading(heading);
@@ -131,20 +78,16 @@ int main()
 
         vision.setSource(Point(light.getPosition().x, light.getPosition().y));
 
-        sf::Color pColour = vision.collision(player) ? sf::Color::Red : sf::Color::Green;
-        player.setFillColor(pColour);
+        if(vision.collision(player.getCollisionBox()))
+            shader.setParameter("color", sf::Vector3f(1.0,0.0,0.0));
+        else
+            shader.setParameter("color", sf::Vector3f(1.0,1.0,1.0));
+
+        player.update(delta);
+        window.draw(player);
 
         window.draw(vision, &shader);
-
-        Point wp1(light.getPosition().x, light.getPosition().y);
-        for(Point*point : waypoints)
-        {
-            DrawTools::drawLine(wp1, *point, sf::Color::Magenta, &window);
-            wp1 = *point;
-        }
-
         window.draw(light);
-        window.draw(player);
         window.display();
     }
 }

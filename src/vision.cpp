@@ -128,17 +128,16 @@ void Vision::run()
 
 }
 
-bool Vision::collision(sf::Shape& other)
+bool Vision::collision(sf::FloatRect collisionBox)
 {
-    if(!_light.getBounds().intersects(other.getGlobalBounds())) return false;
+    if(!_light.getBounds().intersects(collisionBox)) return false;
 
-    sf::FloatRect ogb = other.getGlobalBounds();
     Point boundingBoxPoints[4];
 
-    boundingBoxPoints[0] = Point(ogb.left, ogb.top);
-    boundingBoxPoints[1] = Point(ogb.left + ogb.width, ogb.top);
-    boundingBoxPoints[2] = Point(ogb.left + ogb.width, ogb.top + ogb.height);
-    boundingBoxPoints[3] = Point(ogb.left, ogb.top + ogb.height);
+    boundingBoxPoints[0] = Point(collisionBox.left, collisionBox.top);
+    boundingBoxPoints[1] = Point(collisionBox.left + collisionBox.width, collisionBox.top);
+    boundingBoxPoints[2] = Point(collisionBox.left + collisionBox.width, collisionBox.top + collisionBox.height);
+    boundingBoxPoints[3] = Point(collisionBox.left, collisionBox.top + collisionBox.height);
 
     for(std::size_t j = 0; j < 4; j++)
     {
@@ -160,7 +159,6 @@ bool Vision::collision(sf::Shape& other)
 void Vision::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(_light, states);    
-
     /* sf::RectangleShape rect; */
     /* rect.setPosition(_light.getBounds().left, _light.getBounds().top); */
     /* rect.setSize(sf::Vector2f(_light.getBounds().width, _light.getBounds().height)); */

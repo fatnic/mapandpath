@@ -29,7 +29,7 @@ struct Wall
 {
 	Segment* segments[4];
     Point points[4];
-    sf::IntRect AABB;
+    sf::FloatRect AABB;
 
     Wall(const int x, const int y, const int width, const int height)
     {

@@ -15,7 +15,7 @@ public:
     void setFOV(float angle);
     void setColour(sf::Color colour);
     Point getSource();
-    bool collision(sf::Shape& other);
+    bool collision(sf::FloatRect collisionBox);
     void run();
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     ~Vision();
