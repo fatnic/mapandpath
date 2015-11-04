@@ -6,7 +6,7 @@
 
 Vision::Vision(MapParse* mp, sf::RenderWindow* window)
     :_mp(mp)
-    , _window(window)
+    , _window(window) // DELETE AFTER DEBUGGING
     , _light()
     ,_fov(360)
 {

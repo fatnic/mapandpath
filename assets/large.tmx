@@ -2604,7 +2604,7 @@
   <object id="37" x="768" y="496" width="16" height="128"/>
  </objectgroup>
  <objectgroup name="spawn">
-  <object id="5" name="light" x="992" y="31">
+  <object id="5" name="light" x="556" y="318">
    <ellipse/>
   </object>
   <object id="6" name="player" x="48" y="48">

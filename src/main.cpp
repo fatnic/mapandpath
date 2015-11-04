@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-#include "mapparse.hpp"
 #include "vision.hpp"
 #include "player.hpp"
 
@@ -78,16 +76,15 @@ int main()
 
         vision.setSource(Point(light.getPosition().x, light.getPosition().y));
 
-        if(vision.collision(player.getCollisionBox()))
-            shader.setParameter("color", sf::Vector3f(1.0,0.0,0.0));
-        else
-            shader.setParameter("color", sf::Vector3f(1.0,1.0,1.0));
+        sf::Vector3f color = (vision.collision(player.getCollisionBox())) ? sf::Vector3f(0.75,0.0,0.0) : sf::Vector3f(1.0,1.0,1.0);
+        shader.setParameter("color", color);
 
         player.update(delta);
         window.draw(player);
 
         window.draw(vision, &shader);
         window.draw(light);
+
         window.display();
     }
 }

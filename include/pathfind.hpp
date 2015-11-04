@@ -3,6 +3,7 @@
 
 #include "structs.hpp"
 #include "mapparse.hpp"
+#include <queue>
 
 struct PathNode
 {
@@ -27,7 +28,7 @@ public:
     void buildGridPath();
     void setStart(const int x, const int y);
     void setGoal(const int x, const int y);
-    std::vector<Point*> run();
+    std::queue<Point*> run();
 
 private:
     void calcNeighbours(int x, int y);
@@ -44,7 +45,7 @@ private:
 	bool neighbours[9];
     
     std::vector<Point*> _waypoints;
-    std::vector<Point*> _finalPath;
+    std::queue<Point*> _finalPath;
     std::vector<PathNode*> _openList;
     std::vector<PathNode*> _closedList;
 };

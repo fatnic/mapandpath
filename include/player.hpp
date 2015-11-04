@@ -16,6 +16,8 @@ public:
     void moveDown();
     void moveLeft();
     void moveRight();
+    bool wallCollision(Direction direction);
+    bool wallIntersects(sf::FloatRect bbox);
 
     sf::FloatRect getCollisionBox();
     sf::RenderWindow* _window;
@@ -27,6 +29,7 @@ private:
     sf::CircleShape _circle;
     float _speed;
     float _dx, _dy;
+    float _dT;
     float _heading;
 };
 

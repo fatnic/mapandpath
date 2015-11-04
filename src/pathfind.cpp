@@ -55,15 +55,14 @@ void Pathfind::setGoal(const int x, const int y)
     _goal.y = (y / _mp->getTileSize().y) + 1;    
 }
 
-std::vector<Point*> Pathfind::run()
+std::queue<Point*> Pathfind::run()
 {
     for(auto& point : _waypoints)
         delete point;
     _waypoints.clear();
 
-    for(auto& point : _finalPath)
-        delete point;
-    _finalPath.clear();
+    std::queue<Point*> empty;
+    std::swap(_finalPath, empty);
 
     if(blocked(_start) || blocked(_goal))
         return _finalPath;
@@ -120,7 +119,7 @@ std::vector<Point*> Pathfind::run()
 
                     if(!blocked)
                     {
-                        _finalPath.push_back(new Point(ray.end.x, ray.end.y));
+                        _finalPath.push(new Point(ray.end.x, ray.end.y));
                         ray.start = ray.end;
                         if(ray.start == done) found = true;
                         break;
